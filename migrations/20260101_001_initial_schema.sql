@@ -77,8 +77,8 @@ CREATE TABLE IF NOT EXISTS "app_settings" (
     "maintenance_mode_url" TEXT
 );
 
-INSERT INTO public.app_settings (id, allow_registrations, allow_send_emails, is_maintenance_mode, maintenance_mode_message, maintenance_mode_url)
-VALUES (1, true, false, false, 'The site is currently undergoing maintenance. Please check back later.', NULL)
+INSERT INTO public.app_settings (id, allow_send_emails, is_maintenance_mode, maintenance_mode_message, maintenance_mode_url)
+VALUES (1, true, false, 'The site is currently undergoing maintenance. Please check back later.', NULL)
 ON CONFLICT (id) DO NOTHING;
 
 -- // BOTS

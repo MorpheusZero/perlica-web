@@ -46,12 +46,17 @@ func (s *AppServer) Start() error {
 
 	// Setup Services
 	healthService := services.NewHealthService()
+	templateService := services.NewTemplateService()
+	staticService := services.NewStaticService()
 
 	// Setup Controllers & Routing
 	router := chi.NewRouter()
 	router.Use(middleware.Logger)
 
-	router.Mount("/health", controllers.NewHealthController(healthService).Router)
+	router.Mount("/api/health", controllers.NewHealthController(healthService).Router)
+
+	// Configure UI Controller (at root level)
+	router.Mount("/", controllers.NewUIController(templateService, staticService).MapController())
 
 	fmt.Printf("Server started in %d seconds\n", int(time.Now().Unix()-s.serverStartTime))
 	fmt.Println("Server started successfully on http://0.0.0.0:3000")
