@@ -11,7 +11,9 @@ import (
 	"github.com/moprheuszero/perlica-web/constants"
 	"github.com/moprheuszero/perlica-web/server/controllers"
 	"github.com/moprheuszero/perlica-web/server/database"
+	"github.com/moprheuszero/perlica-web/server/database/repositories"
 	"github.com/moprheuszero/perlica-web/server/services"
+	"github.com/moprheuszero/perlica-web/server/util"
 	"github.com/moprheuszero/perlica-web/server/valkey"
 )
 
@@ -44,10 +46,20 @@ func (s *AppServer) Start() error {
 		return fmt.Errorf("failed to initialize database: %w", err)
 	}
 
+	// Setup Repositories
+	userRepo := repositories.NewUserRepository(database)
+
 	// Setup Services
 	healthService := services.NewHealthService()
 	templateService := services.NewTemplateService()
 	staticService := services.NewStaticService()
+	userService := services.NewUserService(userRepo)
+
+	// First Run Check - Create Default Admin User if not exists
+	err = s.FirstRunCheck(userService)
+	if err != nil {
+		return fmt.Errorf("first run check failed: %w", err)
+	}
 
 	// Setup Controllers & Routing
 	router := chi.NewRouter()
@@ -61,4 +73,22 @@ func (s *AppServer) Start() error {
 	fmt.Printf("Server started in %d seconds\n", int(time.Now().Unix()-s.serverStartTime))
 	fmt.Println("Server started successfully on http://0.0.0.0:3000")
 	return http.ListenAndServe("0.0.0.0:3000", router)
+}
+
+func (s *AppServer) FirstRunCheck(userService *services.UserService) error {
+	_, err := userService.GetUserByUsername("admin")
+	if err != nil {
+		fmt.Printf(err.Error())
+		randomPassword, err := util.GenerateRandomPassword()
+		if err != nil {
+			return fmt.Errorf("failed to generate random password: %w", err)
+		}
+		fmt.Printf("This appears to be the first run. Creating default admin user with username 'admin' and password '%s'.\n", randomPassword)
+		_, err = userService.CreateUser("admin", "admin", randomPassword)
+		if err != nil {
+			return fmt.Errorf("failed to create default admin user: %w", err)
+		}
+		fmt.Println("Default admin user created successfully.")
+	}
+	return nil
 }
