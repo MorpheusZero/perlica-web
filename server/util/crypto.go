@@ -10,7 +10,7 @@ import (
 
 const (
 	saltLength = 16
-	time       = 3
+	time       = 4
 	memory     = 64 * 1024
 	threads    = 4
 	keyLength  = 32

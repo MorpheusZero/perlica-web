@@ -15,7 +15,7 @@ type UserEntity struct {
 	Username     string     `db:"username" json:"username"`
 	UserTypeKey  string     `db:"user_type_key" json:"user_type_key"`
 	PasswordHash *string    `db:"password_hash" json:"-"`
-	APIKey       *string    `db:"api_key" json:"api_key"`
+	APIKey       *string    `db:"api_key" json:"-"`
 	LastLogin    *time.Time `db:"last_login" json:"last_login"`
 }
 
@@ -27,6 +27,16 @@ func NewUserRepository(db *database.Database) *UserRepository {
 	return &UserRepository{
 		db: db,
 	}
+}
+
+// GetUserByID retrieves a user by their ID.
+func (r *UserRepository) GetUserByID(id int) (*UserEntity, error) {
+	var user UserEntity
+	err := r.db.DB.Get(&user, "SELECT * FROM users WHERE id = $1 AND deleted_at IS NULL", id)
+	if err != nil {
+		return nil, err
+	}
+	return &user, nil
 }
 
 // GetUserByUsername retrieves a user by their username.

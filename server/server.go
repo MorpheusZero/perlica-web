@@ -12,6 +12,7 @@ import (
 	"github.com/moprheuszero/perlica-web/server/controllers"
 	"github.com/moprheuszero/perlica-web/server/database"
 	"github.com/moprheuszero/perlica-web/server/database/repositories"
+	"github.com/moprheuszero/perlica-web/server/guards"
 	"github.com/moprheuszero/perlica-web/server/services"
 	"github.com/moprheuszero/perlica-web/server/util"
 	"github.com/moprheuszero/perlica-web/server/valkey"
@@ -48,12 +49,17 @@ func (s *AppServer) Start() error {
 
 	// Setup Repositories
 	userRepo := repositories.NewUserRepository(database)
+	sessionRepo := repositories.NewSessionRepository(database)
+
+	// Setup Guards
+	authGuard := guards.NewAuthGuard(sessionRepo)
 
 	// Setup Services
 	healthService := services.NewHealthService()
 	templateService := services.NewTemplateService()
 	staticService := services.NewStaticService()
 	userService := services.NewUserService(userRepo)
+	authService := services.NewAuthService(sessionRepo, userService)
 
 	// First Run Check - Create Default Admin User if not exists
 	err = s.FirstRunCheck(userService)
@@ -66,6 +72,7 @@ func (s *AppServer) Start() error {
 	router.Use(middleware.Logger)
 
 	router.Mount("/api/health", controllers.NewHealthController(healthService).Router)
+	router.Mount("/api/auth", controllers.NewAuthController(authGuard, authService, userService).MapController())
 
 	// Configure UI Controller (at root level)
 	router.Mount("/", controllers.NewUIController(templateService, staticService).MapController())

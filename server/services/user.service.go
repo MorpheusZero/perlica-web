@@ -15,6 +15,11 @@ func NewUserService(userRepo *repositories.UserRepository) *UserService {
 	}
 }
 
+// GetUserByID retrieves a user by their ID.
+func (s *UserService) GetUserByID(id int) (*repositories.UserEntity, error) {
+	return s.userRepository.GetUserByID(id)
+}
+
 // GetUserByUsername retrieves a user by their username.
 func (s *UserService) GetUserByUsername(username string) (*repositories.UserEntity, error) {
 	return s.userRepository.GetUserByUsername(username)
