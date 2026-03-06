@@ -1,0 +1,598 @@
+{{define "content"}}
+
+<style>
+  /* ── CSS Custom Properties ─────────────────────────────────────────── */
+  :root {
+    --bg-deep: #0b0d11;
+    --bg-card: #13161d;
+    --bg-card-inner: #1a1e28;
+    --bg-input: #1e2230;
+    --border-subtle: #2a2f3f;
+    --border-focus: #5b7cf6;
+    --accent: #5b7cf6;
+    --accent-hover: #7b96f8;
+    --accent-glow: rgba(91, 124, 246, 0.35);
+    --danger: #e05c6a;
+    --danger-bg: rgba(224, 92, 106, 0.12);
+    --text-primary: #e8eaf2;
+    --text-secondary: #7e8499;
+    --text-muted: #535769;
+    --font-brand: "Cinzel", serif;
+    --font-body: "Roboto", sans-serif;
+    --radius-card: 1.125rem;
+    --radius-input: 0.5rem;
+    --shadow-card:
+      0 0 0 1px rgba(255, 255, 255, 0.04), 0 4px 16px rgba(0, 0, 0, 0.55),
+      0 16px 48px rgba(0, 0, 0, 0.65), 0 0 48px rgba(91, 124, 246, 0.07);
+    --shadow-input-focus: 0 0 0 3px rgba(91, 124, 246, 0.28);
+    --shadow-btn:
+      0 4px 14px rgba(91, 124, 246, 0.4), 0 2px 6px rgba(0, 0, 0, 0.4);
+    --shadow-btn-hover:
+      0 6px 20px rgba(91, 124, 246, 0.55), 0 3px 8px rgba(0, 0, 0, 0.5);
+    --transition-fast: 0.18s ease;
+  }
+
+  /* ── Reset / Base ───────────────────────────────────────────────────── */
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(
+      ellipse at 50% 30%,
+      #161a27 0%,
+      var(--bg-deep) 72%
+    );
+    font-family: var(--font-body);
+    color: var(--text-primary);
+    padding: 1.5rem;
+  }
+
+  /* ── Login Wrapper ──────────────────────────────────────────────────── */
+  .login-wrapper {
+    width: 100%;
+    max-width: 420px;
+  }
+
+  /* ── Card ───────────────────────────────────────────────────────────── */
+  .login-card {
+    background: var(--bg-card);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+    border: 1px solid var(--border-subtle);
+    overflow: hidden;
+  }
+
+  /* ── Card Header (brand) ────────────────────────────────────────────── */
+  .login-card__header {
+    padding: 2.25rem 2.5rem 1.75rem;
+    text-align: center;
+    background: linear-gradient(160deg, #191e2c 0%, var(--bg-card) 100%);
+    border-bottom: 1px solid var(--border-subtle);
+    position: relative;
+  }
+
+  .login-card__header::after {
+    content: "";
+    position: absolute;
+    bottom: -1px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 48px;
+    height: 2px;
+    background: var(--accent);
+    border-radius: 1px;
+    box-shadow: 0 0 12px var(--accent-glow);
+  }
+
+  .login-logo {
+    width: 52px;
+    height: 52px;
+    object-fit: contain;
+    margin-bottom: 0.85rem;
+    filter: drop-shadow(0 2px 8px var(--accent-glow));
+  }
+
+  .login-brand {
+    font-family: var(--font-brand);
+    font-size: 1.55rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: var(--text-primary);
+    margin: 0 0 0.3rem;
+    line-height: 1.2;
+  }
+
+  .login-subtitle {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin: 0;
+  }
+
+  /* ── Card Body ──────────────────────────────────────────────────────── */
+  .login-card__body {
+    padding: 2rem 2.5rem 2.25rem;
+  }
+
+  /* ── Form Labels ─────────────────────────────────────────────────────── */
+  .login-label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin-bottom: 0.45rem;
+  }
+
+  /* ── Input Groups ────────────────────────────────────────────────────── */
+  .input-group {
+    margin-bottom: 1.25rem;
+  }
+
+  .input-group-wrapper {
+    position: relative;
+    display: flex;
+    align-items: stretch;
+  }
+
+  .input-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    pointer-events: none;
+    z-index: 2;
+    transition: color var(--transition-fast);
+  }
+
+  .login-input {
+    width: 100%;
+    background: var(--bg-input);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-input);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 0.925rem;
+    padding: 0.75rem 1rem 0.75rem 2.75rem;
+    outline: none;
+    transition:
+      border-color var(--transition-fast),
+      box-shadow var(--transition-fast);
+    -webkit-appearance: none;
+  }
+
+  .login-input::placeholder {
+    color: var(--text-muted);
+  }
+
+  .login-input:focus {
+    border-color: var(--border-focus);
+    box-shadow: var(--shadow-input-focus);
+    background: #222639;
+  }
+
+  .login-input:focus + .input-icon,
+  .input-group-wrapper:focus-within .input-icon {
+    color: var(--accent);
+  }
+
+  /* password has extra right padding for toggle */
+  .login-input--password {
+    padding-right: 3rem;
+  }
+
+  /* ── Password Toggle ─────────────────────────────────────────────────── */
+  .btn-toggle-pass {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    padding: 0.25rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 0.85rem;
+    line-height: 1;
+    z-index: 2;
+    transition: color var(--transition-fast);
+  }
+
+  .btn-toggle-pass:hover {
+    color: var(--text-secondary);
+  }
+
+  /* ── Field Error ─────────────────────────────────────────────────────── */
+  .field-error {
+    display: none;
+    font-size: 0.75rem;
+    color: var(--danger);
+    margin-top: 0.35rem;
+    padding-left: 0.1rem;
+  }
+
+  .field-error.visible {
+    display: block;
+  }
+
+  .login-input.is-invalid {
+    border-color: var(--danger);
+    box-shadow: 0 0 0 3px rgba(224, 92, 106, 0.2);
+  }
+
+  /* ── Server Error Alert ──────────────────────────────────────────────── */
+  .login-alert {
+    display: none;
+    align-items: flex-start;
+    gap: 0.7rem;
+    background: var(--danger-bg);
+    border: 1px solid rgba(224, 92, 106, 0.3);
+    border-left: 3px solid var(--danger);
+    border-radius: var(--radius-input);
+    padding: 0.75rem 0.9rem;
+    margin-bottom: 1.25rem;
+    font-size: 0.85rem;
+    color: #f0a0a9;
+  }
+
+  .login-alert.visible {
+    display: flex;
+  }
+
+  .login-alert__icon {
+    font-size: 0.9rem;
+    margin-top: 0.05rem;
+    flex-shrink: 0;
+  }
+
+  .login-alert__close {
+    margin-left: auto;
+    background: none;
+    border: none;
+    color: inherit;
+    opacity: 0.6;
+    cursor: pointer;
+    padding: 0;
+    font-size: 0.8rem;
+    line-height: 1;
+    flex-shrink: 0;
+    transition: opacity var(--transition-fast);
+  }
+
+  .login-alert__close:hover {
+    opacity: 1;
+  }
+
+  /* ── Submit Button ───────────────────────────────────────────────────── */
+  .btn-login {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+    width: 100%;
+    padding: 0.8rem 1.25rem;
+    margin-top: 1.5rem;
+    background: var(--accent);
+    border: none;
+    border-radius: var(--radius-input);
+    color: #fff;
+    font-family: var(--font-body);
+    font-size: 0.925rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    box-shadow: var(--shadow-btn);
+    transition:
+      background var(--transition-fast),
+      transform var(--transition-fast),
+      box-shadow var(--transition-fast);
+  }
+
+  .btn-login:hover:not(:disabled) {
+    background: var(--accent-hover);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-btn-hover);
+  }
+
+  .btn-login:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: var(--shadow-btn);
+  }
+
+  .btn-login:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+  }
+
+  .btn-login .btn-spinner {
+    display: none;
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid rgba(255, 255, 255, 0.35);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+
+  .btn-login.loading .btn-spinner {
+    display: block;
+  }
+  .btn-login.loading .btn-icon {
+    display: none;
+  }
+  .btn-login.loading .btn-text {
+    opacity: 0.7;
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  /* ── Footer ──────────────────────────────────────────────────────────── */
+  .login-card__footer {
+    padding: 0.9rem 2.5rem 1.1rem;
+    text-align: center;
+    border-top: 1px solid var(--border-subtle);
+    background: rgba(0, 0, 0, 0.15);
+  }
+
+  .login-card__footer p {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin: 0;
+    letter-spacing: 0.03em;
+  }
+
+  /* ── Responsive tweaks ───────────────────────────────────────────────── */
+  @media (max-width: 480px) {
+    body {
+      padding: 1rem;
+      align-items: flex-start;
+      padding-top: 2.5rem;
+    }
+    .login-card__header {
+      padding: 1.75rem 1.5rem 1.5rem;
+    }
+    .login-card__body {
+      padding: 1.5rem 1.5rem 1.75rem;
+    }
+    .login-card__footer {
+      padding: 0.9rem 1.5rem 1rem;
+    }
+    .login-brand {
+      font-size: 1.35rem;
+    }
+  }
+</style>
+
+<div class="login-wrapper">
+  <div class="login-card">
+    <!-- ── Header / Brand ─────────────────────────────────── -->
+    <div class="login-card__header">
+      <img src="/static/images/favicon.png" alt="Perlica" class="login-logo" />
+      <h1 class="login-brand">Perlica</h1>
+      <p class="login-subtitle">Sign in to your account</p>
+    </div>
+
+    <!-- ── Body / Form ────────────────────────────────────── -->
+    <div class="login-card__body">
+      <!-- Server error alert -->
+      <div class="login-alert" id="loginAlert" role="alert">
+        <span class="login-alert__icon"
+          ><i class="fa-solid fa-circle-exclamation"></i
+        ></span>
+        <span class="login-alert__msg" id="loginAlertMsg"
+          >Invalid username or password.</span
+        >
+        <button
+          class="login-alert__close"
+          id="loginAlertClose"
+          aria-label="Dismiss"
+        >
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <form id="loginForm" novalidate autocomplete="on">
+        <!-- Username -->
+        <div class="input-group">
+          <label for="username" class="login-label">Username</label>
+          <div class="input-group-wrapper">
+            <i class="fa-solid fa-user input-icon"></i>
+            <input
+              id="username"
+              name="username"
+              type="text"
+              class="login-input"
+              placeholder="Enter your username"
+              autocomplete="username"
+              spellcheck="false"
+            />
+          </div>
+          <span class="field-error" id="usernameError"
+            >Username is required.</span
+          >
+        </div>
+
+        <!-- Password -->
+        <div class="input-group">
+          <label for="password" class="login-label">Password</label>
+          <div class="input-group-wrapper">
+            <i class="fa-solid fa-lock input-icon"></i>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              class="login-input login-input--password"
+              placeholder="Enter your password"
+              autocomplete="current-password"
+            />
+            <button
+              type="button"
+              class="btn-toggle-pass"
+              id="togglePass"
+              aria-label="Show password"
+            >
+              <i class="fa-solid fa-eye" id="togglePassIcon"></i>
+            </button>
+          </div>
+          <span class="field-error" id="passwordError"
+            >Password is required.</span
+          >
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" class="btn-login" id="loginBtn">
+          <span class="btn-spinner"></span>
+          <span
+            class="material-symbols-outlined btn-icon"
+            style="font-size: 1.1rem; line-height: 1"
+            >login</span
+          >
+          <span class="btn-text">Sign In</span>
+        </button>
+      </form>
+    </div>
+
+    <!-- ── Footer ─────────────────────────────────────────── -->
+    <div class="login-card__footer">
+      <p>
+        &copy; {{/* current year could be injected server-side */}} Perlica. All
+        rights reserved.
+      </p>
+    </div>
+  </div>
+</div>
+
+<script>
+  (() => {
+    const form = document.getElementById("loginForm");
+    const usernameEl = document.getElementById("username");
+    const passwordEl = document.getElementById("password");
+    const usernameErr = document.getElementById("usernameError");
+    const passwordErr = document.getElementById("passwordError");
+    const loginBtn = document.getElementById("loginBtn");
+    const alert = document.getElementById("loginAlert");
+    const alertMsg = document.getElementById("loginAlertMsg");
+    const alertClose = document.getElementById("loginAlertClose");
+    const togglePass = document.getElementById("togglePass");
+    const toggleIcon = document.getElementById("togglePassIcon");
+
+    /* ── Show/hide password ─────────────────────── */
+    togglePass.addEventListener("click", () => {
+      const showing = passwordEl.type === "text";
+      passwordEl.type = showing ? "password" : "text";
+      toggleIcon.className = showing
+        ? "fa-solid fa-eye"
+        : "fa-solid fa-eye-slash";
+      togglePass.setAttribute(
+        "aria-label",
+        showing ? "Show password" : "Hide password",
+      );
+    });
+
+    /* ── Dismiss server error ───────────────────── */
+    alertClose.addEventListener("click", () => {
+      alert.classList.remove("visible");
+    });
+
+    /* ── Clear field error on input ─────────────── */
+    usernameEl.addEventListener("input", () =>
+      clearFieldError(usernameEl, usernameErr),
+    );
+    passwordEl.addEventListener("input", () =>
+      clearFieldError(passwordEl, passwordErr),
+    );
+
+    function clearFieldError(input, errEl) {
+      input.classList.remove("is-invalid");
+      errEl.classList.remove("visible");
+    }
+
+    function showFieldError(input, errEl) {
+      input.classList.add("is-invalid");
+      errEl.classList.add("visible");
+    }
+
+    /* ── Validate ───────────────────────────────── */
+    function validate() {
+      let valid = true;
+      if (!usernameEl.value.trim()) {
+        showFieldError(usernameEl, usernameErr);
+        valid = false;
+      }
+      if (!passwordEl.value) {
+        showFieldError(passwordEl, passwordErr);
+        valid = false;
+      }
+      return valid;
+    }
+
+    /* ── Loading state ──────────────────────────── */
+    function setLoading(on) {
+      loginBtn.disabled = on;
+      loginBtn.classList.toggle("loading", on);
+    }
+
+    /* ── Show server error ──────────────────────── */
+    function showServerError(msg) {
+      alertMsg.textContent =
+        msg || "An unexpected error occurred. Please try again.";
+      alert.classList.add("visible");
+      alert.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+
+    /* ── Form submit ────────────────────────────── */
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      alert.classList.remove("visible");
+
+      if (!validate()) return;
+
+      const username = usernameEl.value.trim();
+      const password = passwordEl.value;
+      const encoded = btoa(`${username}:${password}`);
+
+      setLoading(true);
+
+      try {
+        const res = await fetch("/api/auth/login", {
+          method: "POST",
+          headers: { Authorization: `Basic ${encoded}` },
+        });
+
+        if (res.ok) {
+          window.location.href = "/dashboard";
+          return;
+        }
+
+        if (res.status === 401) {
+          showServerError("Invalid username or password.");
+        } else {
+          showServerError(`Login failed (${res.status}). Please try again.`);
+        }
+      } catch (_err) {
+        showServerError(
+          "Unable to reach the server. Please check your connection.",
+        );
+      } finally {
+        setLoading(false);
+      }
+    });
+  })();
+</script>
+{{end}}

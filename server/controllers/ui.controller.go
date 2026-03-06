@@ -25,9 +25,9 @@ func (c *UIController) MapController() *chi.Mux {
 	router := chi.NewRouter()
 
 	// Root redirect to welcome
-	router.Get("/", c.redirectToWelcome)
+	router.Get("/", c.redirectToLogin)
 
-	router.Get("/welcome", c.welcome)
+	router.Get("/login", c.login)
 
 	// Static file serving
 	router.Get("/static/*", c.serveStatic)
@@ -46,25 +46,25 @@ func (c *UIController) serveStatic(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (c *UIController) redirectToWelcome(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Redirecting root to welcome page")
-	http.Redirect(w, r, "/welcome", http.StatusMovedPermanently)
+func (c *UIController) redirectToLogin(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Redirecting root to login page")
+	http.Redirect(w, r, "/login", http.StatusMovedPermanently)
 }
 
-func (c *UIController) welcome(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Serving welcome page")
+func (c *UIController) login(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Serving login page")
 
 	pageData := services.PageData{
-		Title:       "Welcome",
-		Description: "Welcome to Parallax - A journey through the rifts of space-time",
+		Title:       "Login",
+		Description: "Login to Perlica",
 		Data: map[string]interface{}{
 			"PrelaunchMode": false,
 		},
 	}
 
-	err := c.templateService.RenderTemplate(w, "welcome", pageData)
+	err := c.templateService.RenderTemplate(w, "login", pageData)
 	if err != nil {
-		fmt.Println("Failed to render welcome page: " + err.Error())
+		fmt.Println("Failed to render login page: " + err.Error())
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}

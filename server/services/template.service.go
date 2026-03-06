@@ -73,7 +73,6 @@ func (ts *TemplateService) loadTemplates() {
 	// Parse components
 	componentFiles := []string{
 		"templates/layouts/components/head.html",
-		"templates/layouts/components/footer.html",
 		"templates/layouts/components/navbar.html",
 	}
 
@@ -93,7 +92,7 @@ func (ts *TemplateService) loadTemplates() {
 
 	// Load page templates
 	pageFiles := []string{
-		"templates/pages/welcome.html",
+		"templates/pages/login.html",
 	}
 
 	for _, file := range pageFiles {
