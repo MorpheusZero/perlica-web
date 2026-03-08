@@ -50,6 +50,7 @@ func (s *AppServer) Start() error {
 	// Setup Repositories
 	userRepo := repositories.NewUserRepository(database)
 	sessionRepo := repositories.NewSessionRepository(database)
+	botRepo := repositories.NewBotRepository(database)
 
 	// Setup Guards
 	authGuard := guards.NewAuthGuard(sessionRepo, userRepo)
@@ -60,6 +61,7 @@ func (s *AppServer) Start() error {
 	staticService := services.NewStaticService()
 	userService := services.NewUserService(userRepo)
 	authService := services.NewAuthService(sessionRepo, userService)
+	botService := services.NewBotService(botRepo)
 
 	// First Run Check - Create Default Admin User if not exists
 	err = s.FirstRunCheck(userService)
@@ -73,6 +75,7 @@ func (s *AppServer) Start() error {
 
 	router.Mount("/api/health", controllers.NewHealthController(healthService).Router)
 	router.Mount("/api/auth", controllers.NewAuthController(authGuard, s.envProvider, authService, userService).MapController())
+	router.Mount("/api/bots", controllers.NewBotController(authGuard, s.envProvider, botService).MapController())
 
 	// Configure UI Controller (at root level)
 	router.Mount("/", controllers.NewUIController(authGuard, templateService, staticService).MapController())

@@ -32,7 +32,7 @@ func (c *UIController) MapController() *chi.Mux {
 
 	router.Get("/login", c.login)
 	router.With(c.authGuard.ValidateSession).Get("/dashboard", c.dashboard)
-	router.With(c.authGuard.ValidateSession).Get("/news", c.news)
+	router.With(c.authGuard.ValidateSession).Get("/bots", c.bots)
 
 	// Static file serving
 	router.Get("/static/*", c.serveStatic)
@@ -100,8 +100,8 @@ func (c *UIController) dashboard(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (c *UIController) news(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Serving news page")
+func (c *UIController) bots(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Serving bots page")
 
 	user := c.authGuard.GetUserFromSessionContext(r)
 	if user == nil {
@@ -110,17 +110,17 @@ func (c *UIController) news(w http.ResponseWriter, r *http.Request) {
 	}
 
 	pageData := services.PageData{
-		Title:       "News",
-		Description: "Latest news and updates",
+		Title:       "Bots Management",
+		Description: "Manage your bots",
 
 		Data: map[string]interface{}{
 			"User": user,
 		},
 	}
 
-	err := c.templateService.RenderTemplate(w, "news", pageData)
+	err := c.templateService.RenderTemplate(w, "bots", pageData)
 	if err != nil {
-		fmt.Println("Failed to render news page: " + err.Error())
+		fmt.Println("Failed to render bots page: " + err.Error())
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}

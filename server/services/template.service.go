@@ -94,7 +94,7 @@ func (ts *TemplateService) loadTemplates() {
 	pageFiles := []string{
 		"templates/pages/login.html",
 		"templates/pages/dashboard.html",
-		"templates/pages/news.html",
+		"templates/pages/bots.html",
 	}
 
 	for _, file := range pageFiles {
