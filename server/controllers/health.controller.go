@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/moprheuszero/perlica-web/server/services"
+	"github.com/morpheuszero/perlica-web/server/services"
 )
 
 type HealthController struct {

@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/moprheuszero/perlica-web/cmd"
+	"github.com/morpheuszero/perlica-web/cmd"
 )
 
 func main() {

@@ -1,6 +1,6 @@
 package cmd
 
-import "github.com/moprheuszero/perlica-web/server"
+import "github.com/morpheuszero/perlica-web/server"
 
 type ServerCommand struct {
 }

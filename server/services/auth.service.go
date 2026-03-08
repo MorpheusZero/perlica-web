@@ -3,8 +3,8 @@ package services
 import (
 	"errors"
 
-	"github.com/moprheuszero/perlica-web/server/database/repositories"
-	"github.com/moprheuszero/perlica-web/server/util"
+	"github.com/morpheuszero/perlica-web/server/database/repositories"
+	"github.com/morpheuszero/perlica-web/server/util"
 )
 
 type AuthService struct {

@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/moprheuszero/perlica-web/server/database/repositories"
+	"github.com/morpheuszero/perlica-web/server/database/repositories"
 )
 
 type contextKey string

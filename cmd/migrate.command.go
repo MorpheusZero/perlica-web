@@ -3,9 +3,9 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/moprheuszero/perlica-web/config"
-	"github.com/moprheuszero/perlica-web/constants"
 	"github.com/morpheuszero/go-heimdall/v2"
+	"github.com/morpheuszero/perlica-web/config"
+	"github.com/morpheuszero/perlica-web/constants"
 )
 
 type MigrateCommand struct {

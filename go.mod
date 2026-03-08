@@ -1,4 +1,4 @@
-module github.com/moprheuszero/perlica-web
+module github.com/morpheuszero/perlica-web
 
 go 1.25.6
 

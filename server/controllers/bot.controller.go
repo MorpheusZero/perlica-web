@@ -5,9 +5,9 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/moprheuszero/perlica-web/config"
-	"github.com/moprheuszero/perlica-web/server/guards"
-	"github.com/moprheuszero/perlica-web/server/services"
+	"github.com/morpheuszero/perlica-web/config"
+	"github.com/morpheuszero/perlica-web/server/guards"
+	"github.com/morpheuszero/perlica-web/server/services"
 )
 
 type BotController struct {

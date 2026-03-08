@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/moprheuszero/perlica-web/constants"
+	"github.com/morpheuszero/perlica-web/constants"
 )
 
 type HelpCommand struct {

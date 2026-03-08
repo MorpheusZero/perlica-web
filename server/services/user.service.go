@@ -1,8 +1,8 @@
 package services
 
 import (
-	"github.com/moprheuszero/perlica-web/server/database/repositories"
-	"github.com/moprheuszero/perlica-web/server/util"
+	"github.com/morpheuszero/perlica-web/server/database/repositories"
+	"github.com/morpheuszero/perlica-web/server/util"
 )
 
 type UserService struct {

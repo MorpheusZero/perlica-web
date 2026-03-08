@@ -3,7 +3,7 @@ package repositories
 import (
 	"time"
 
-	"github.com/moprheuszero/perlica-web/server/database"
+	"github.com/morpheuszero/perlica-web/server/database"
 )
 
 type SessionEntity struct {
