@@ -1,0 +1,15 @@
+{{define "content"}}
+
+<style></style>
+
+<div class="container">
+  <h1>Welcome to the News, {{.Data.User.Username}}</h1>
+  <p>This is a protected page that only authenticated users can access.</p>
+</div>
+
+<script>
+  (() => {
+    console.log("News page script loaded");
+  })();
+</script>
+{{end}}

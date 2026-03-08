@@ -6,16 +6,19 @@ import (
 	"strings"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/moprheuszero/perlica-web/server/guards"
 	"github.com/moprheuszero/perlica-web/server/services"
 )
 
 type UIController struct {
+	authGuard       *guards.AuthGuard
 	templateService services.ITemplateService
 	staticService   services.IStaticService
 }
 
-func NewUIController(templateService services.ITemplateService, staticService services.IStaticService) *UIController {
+func NewUIController(authGuard *guards.AuthGuard, templateService services.ITemplateService, staticService services.IStaticService) *UIController {
 	return &UIController{
+		authGuard:       authGuard,
 		templateService: templateService,
 		staticService:   staticService,
 	}
@@ -28,6 +31,8 @@ func (c *UIController) MapController() *chi.Mux {
 	router.Get("/", c.redirectToLogin)
 
 	router.Get("/login", c.login)
+	router.With(c.authGuard.ValidateSession).Get("/dashboard", c.dashboard)
+	router.With(c.authGuard.ValidateSession).Get("/news", c.news)
 
 	// Static file serving
 	router.Get("/static/*", c.serveStatic)
@@ -65,6 +70,57 @@ func (c *UIController) login(w http.ResponseWriter, r *http.Request) {
 	err := c.templateService.RenderTemplate(w, "login", pageData)
 	if err != nil {
 		fmt.Println("Failed to render login page: " + err.Error())
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+}
+
+func (c *UIController) dashboard(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Serving dashboard page")
+
+	user := c.authGuard.GetUserFromSessionContext(r)
+	if user == nil {
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
+
+	pageData := services.PageData{
+		Title:       "Dashboard",
+		Description: "Welcome to your dashboard",
+		Data: map[string]interface{}{
+			"User": user,
+		},
+	}
+
+	err := c.templateService.RenderTemplate(w, "dashboard", pageData)
+	if err != nil {
+		fmt.Println("Failed to render dashboard page: " + err.Error())
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+}
+
+func (c *UIController) news(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Serving news page")
+
+	user := c.authGuard.GetUserFromSessionContext(r)
+	if user == nil {
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
+
+	pageData := services.PageData{
+		Title:       "News",
+		Description: "Latest news and updates",
+
+		Data: map[string]interface{}{
+			"User": user,
+		},
+	}
+
+	err := c.templateService.RenderTemplate(w, "news", pageData)
+	if err != nil {
+		fmt.Println("Failed to render news page: " + err.Error())
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}

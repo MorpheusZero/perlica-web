@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/moprheuszero/perlica-web/config"
 	"github.com/moprheuszero/perlica-web/server/database/repositories"
 	"github.com/moprheuszero/perlica-web/server/guards"
 	"github.com/moprheuszero/perlica-web/server/services"
@@ -13,13 +14,15 @@ import (
 
 type AuthController struct {
 	authGuard   *guards.AuthGuard
+	config      *config.EnvProvider
 	authService *services.AuthService
 	userService *services.UserService
 }
 
-func NewAuthController(authGuard *guards.AuthGuard, authService *services.AuthService, userService *services.UserService) *AuthController {
+func NewAuthController(authGuard *guards.AuthGuard, config *config.EnvProvider, authService *services.AuthService, userService *services.UserService) *AuthController {
 	return &AuthController{
 		authGuard:   authGuard,
+		config:      config,
 		authService: authService,
 		userService: userService,
 	}
@@ -68,9 +71,11 @@ func (c *AuthController) login(w http.ResponseWriter, r *http.Request) {
 	// Write SessionID to a secure cookie (HttpOnly, Secure, SameSite) - In production, ensure Secure is true and SameSite is set appropriately
 	http.SetCookie(w, &http.Cookie{
 		Name:     "perlica_session",
+		Domain:   c.config.GetHostDomain(),
+		Path:     "/",
 		Value:    session.SessionID,
 		HttpOnly: true,
-		Secure:   false, // Set to true in production
+		Secure:   c.config.GetHostDomain() != "localhost:3000", // Set to true in production
 		SameSite: http.SameSiteStrictMode,
 	})
 

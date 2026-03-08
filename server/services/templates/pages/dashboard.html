@@ -1,0 +1,22 @@
+{{define "content"}}
+
+<style></style>
+
+<div class="container">
+  <h1>Welcome to the Dashboard, {{.Data.User.Username}}</h1>
+  <p>This is a protected page that only authenticated users can access.</p>
+
+  <button id="btnNews" class="btn btn-primary">Go to News</button>
+</div>
+
+<script>
+  (() => {
+    console.log("Dashboard page script loaded");
+
+    // FIXME: This is a temporary solution to navigate to the news page. We should implement proper client-side routing in the future.
+    document.getElementById("btnNews").addEventListener("click", () => {
+      window.location.href = "/news";
+    });
+  })();
+</script>
+{{end}}

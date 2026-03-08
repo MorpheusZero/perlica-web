@@ -2,6 +2,7 @@ package guards
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -14,11 +15,13 @@ const SessionContextKey contextKey = "perlica_session"
 
 type AuthGuard struct {
 	sessionRepo *repositories.SessionRepository
+	userRepo    *repositories.UserRepository
 }
 
-func NewAuthGuard(sessionRepo *repositories.SessionRepository) *AuthGuard {
+func NewAuthGuard(sessionRepo *repositories.SessionRepository, userRepo *repositories.UserRepository) *AuthGuard {
 	return &AuthGuard{
 		sessionRepo: sessionRepo,
+		userRepo:    userRepo,
 	}
 }
 
@@ -28,7 +31,8 @@ func (g *AuthGuard) ValidateSession(next http.Handler) http.Handler {
 		// Extract session ID from perlica_session cookie
 		cookie, err := r.Cookie("perlica_session")
 		if err != nil {
-			http.Error(w, "Session cookie is required", http.StatusUnauthorized)
+			fmt.Println("No perlica_session cookie found")
+			http.Redirect(w, r, "/login", http.StatusSeeOther)
 			return
 		}
 
@@ -37,13 +41,15 @@ func (g *AuthGuard) ValidateSession(next http.Handler) http.Handler {
 		// Retrieve and validate session
 		session, err := g.sessionRepo.GetSessionBySessionID(sessionID)
 		if err != nil || session == nil {
-			http.Error(w, "Invalid or expired session", http.StatusUnauthorized)
+			fmt.Printf("Invalid session: %s\n", err.Error())
+			http.Redirect(w, r, "/login", http.StatusSeeOther)
 			return
 		}
 
 		// Check if session has expired
 		if time.Now().After(session.SessionExpiresAt) {
-			http.Error(w, "Session expired", http.StatusUnauthorized)
+			fmt.Println("Session has expired")
+			http.Redirect(w, r, "/login", http.StatusSeeOther)
 			return
 		}
 
@@ -51,6 +57,18 @@ func (g *AuthGuard) ValidateSession(next http.Handler) http.Handler {
 		ctx := context.WithValue(r.Context(), SessionContextKey, session)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
+}
+
+func (g *AuthGuard) GetUserFromSessionContext(r *http.Request) *repositories.UserEntity {
+	session := GetSessionFromContext(r)
+	if session == nil {
+		return nil
+	}
+	user, err := g.userRepo.GetUserByID(session.UserID)
+	if err != nil {
+		return nil
+	}
+	return user
 }
 
 // GetSessionFromContext retrieves the session from request context

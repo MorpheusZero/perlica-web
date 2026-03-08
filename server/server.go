@@ -52,7 +52,7 @@ func (s *AppServer) Start() error {
 	sessionRepo := repositories.NewSessionRepository(database)
 
 	// Setup Guards
-	authGuard := guards.NewAuthGuard(sessionRepo)
+	authGuard := guards.NewAuthGuard(sessionRepo, userRepo)
 
 	// Setup Services
 	healthService := services.NewHealthService()
@@ -72,10 +72,10 @@ func (s *AppServer) Start() error {
 	router.Use(middleware.Logger)
 
 	router.Mount("/api/health", controllers.NewHealthController(healthService).Router)
-	router.Mount("/api/auth", controllers.NewAuthController(authGuard, authService, userService).MapController())
+	router.Mount("/api/auth", controllers.NewAuthController(authGuard, s.envProvider, authService, userService).MapController())
 
 	// Configure UI Controller (at root level)
-	router.Mount("/", controllers.NewUIController(templateService, staticService).MapController())
+	router.Mount("/", controllers.NewUIController(authGuard, templateService, staticService).MapController())
 
 	fmt.Printf("Server started in %d seconds\n", int(time.Now().Unix()-s.serverStartTime))
 	fmt.Println("Server started successfully on http://0.0.0.0:3000")
@@ -85,7 +85,7 @@ func (s *AppServer) Start() error {
 func (s *AppServer) FirstRunCheck(userService *services.UserService) error {
 	_, err := userService.GetUserByUsername("admin")
 	if err != nil {
-		fmt.Printf(err.Error())
+		fmt.Printf("%s", err.Error())
 		randomPassword, err := util.GenerateRandomPassword()
 		if err != nil {
 			return fmt.Errorf("failed to generate random password: %w", err)
